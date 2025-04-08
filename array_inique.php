@@ -1,68 +1,94 @@
 <?php 
 
-function generateLargeHeavyArray(int $size = 1_000_000, int $valueLength = 1_000_000): array {
-    $baseValues = [
-        str_repeat('A', $valueLength),
-        str_repeat('B', $valueLength),
-        str_repeat('C', $valueLength),
-        str_repeat('Z', $valueLength)
-    ];
+include "Library/functions.php";
 
-    $array = [];
 
-    for ($i = 0; $i < $size; $i++) {
-        $key = 'key_' . str_pad((string)$i, 8, '0', STR_PAD_LEFT);
-        $value = $baseValues[$i % count($baseValues)];
-        $array[$key] = $value;
+
+function array_unique_benchmark(int $size, int $valueLength, string $sortOrder) {
+    echo "Beging benchmark with size : $size, elementSize $valueLength, sorting type '$sortOrder'. \n";
+    echo "\n\n\n";
+    $a = generateLargeHeavyArraySorted($size, $valueLength, $sortOrder);
+
+    $countOccurences = 0;
+    $start = microtime(true);
+    while (microtime(true) - $start < 10) {
+      array_keys(array_count_values($a));
+      $countOccurences++;
     }
 
-    return $array;
-}
+    echo "Native php alternative : array_keys(array_count_values()) - count : {$countOccurences}\n";
 
-function unique_preserve_keys(array $array): array {
-    $seen = [];
-    $result = [];
-
-    foreach ($array as $key => $value) {
-        if (!isset($seen[$value])) {
-            $seen[$value] = true;
-            $result[$key] = $value;
-        }
+    $countOccurences = 0;
+    $start = microtime(true);
+    while (microtime(true) - $start < 10) {
+      array_keys(array_flip($a));
+      $countOccurences++;
     }
 
-    return $result;
+    echo "Native php alternative : array_keys(array_flip()) - count : {$countOccurences}\n";
+
+    $countOccurences = 0;
+    $start = microtime(true);
+    while (microtime(true) - $start < 10) {
+      unique_preserve_keys($a);
+      $countOccurences++;
+    }
+
+    echo "Custom implementation : unique_preserve_keys - count : {$countOccurences}\n";
+
+    $countOccurences = 0;
+    $start = microtime(true);
+    while (microtime(true) - $start < 10) {
+      array_unique($a);
+      $countOccurences++;
+    }
+    echo "array_unique - count : {$countOccurences}\n";
 }
 
+array_unique_benchmark(10, 10, 'begin');
+array_unique_benchmark(10, 10, 'end');
+array_unique_benchmark(10, 10, 'random');
 
-$a = generateLargeHeavyArray(1000000, 1000000);
+array_unique_benchmark(10, 100, 'begin');
+array_unique_benchmark(10, 100, 'end');
+array_unique_benchmark(10, 100, 'random');
 
-function array_unique_refactored($a): array {
-  return array_keys(array_count_values($a));
-}
+array_unique_benchmark(10, 1_000, 'begin');
+array_unique_benchmark(10, 1_000, 'end');
+array_unique_benchmark(10, 1_000, 'random');
 
-$countOccurences = 0;
-$start = microtime(true);
-while (microtime(true) - $start < 10) {
-  array_keys(array_count_values($a));
-  $countOccurences++;
-}
+array_unique_benchmark(1_000, 10, 'begin');
+array_unique_benchmark(1_000, 10, 'end');
+array_unique_benchmark(1_000, 10, 'random');
 
-echo "Native php alternative - executions : {$countOccurences}\n";
+array_unique_benchmark(1_000, 100, 'begin');
+array_unique_benchmark(1_000, 100, 'end');
+array_unique_benchmark(1_000, 100, 'random');
 
-$countOccurences = 0;
-$start = microtime(true);
-while (microtime(true) - $start < 10) {
-  array_unique_refactored($a);
-  $countOccurences++;
-}
+array_unique_benchmark(1_000, 1_000, 'begin');
+array_unique_benchmark(1_000, 1_000, 'end');
+array_unique_benchmark(1_000, 1_000, 'random');
 
-echo "array_unique refactored - executions : {$countOccurences}\n";
+array_unique_benchmark(1_000_000, 10, 'begin');
+array_unique_benchmark(1_000_000, 10, 'end');
+array_unique_benchmark(1_000_000, 10, 'random');
 
-$countOccurences = 0;
-$start = microtime(true);
-while (microtime(true) - $start < 10) {
-  array_unique($a);
-  $countOccurences++;
-}
-echo "array_unique - executions : {$countOccurences} ";
+array_unique_benchmark(1_000_000, 100, 'begin');
+array_unique_benchmark(1_000_000, 100, 'end');
+array_unique_benchmark(1_000_000, 100, 'random');
 
+array_unique_benchmark(1_000_000, 1_000, 'begin');
+array_unique_benchmark(1_000_000, 1_000, 'end');
+array_unique_benchmark(1_000_000, 1_000, 'random');
+
+array_unique_benchmark(1_000_000_0, 10, 'begin');
+array_unique_benchmark(1_000_000_0, 10, 'end');
+array_unique_benchmark(1_000_000_0, 10, 'random');
+
+array_unique_benchmark(1_000_000_0, 100, 'begin');
+array_unique_benchmark(1_000_000_0, 100, 'end');
+array_unique_benchmark(1_000_000_0, 100, 'random');
+
+array_unique_benchmark(1_000_000_0, 1_000, 'begin');
+array_unique_benchmark(1_000_000_0, 1_000, 'end');
+array_unique_benchmark(1_000_000_0, 1_000, 'random');
