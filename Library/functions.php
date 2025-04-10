@@ -17,12 +17,9 @@ function generateLargeHeavyArraySorted(int $size = 1_000_000, int $valueLength =
     }
 
     switch ($sortOrder) {
-        case 'begin':
+        case 'sorted':
             asort($array);
-            break;
-        case 'end':
-            arsort($array);
-            break;
+        break;
     }
 
     return $array;
