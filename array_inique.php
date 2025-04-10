@@ -25,7 +25,6 @@ function array_unique_benchmark(int $size, int $valueLength, string $sortOrder) 
     }
     echo "Native php alternative : array_keys(array_flip()) - count : {$countOccurences}\n";
 
-
     $countOccurences = 0;
     $start = microtime(true);
     while (microtime(true) - $start < 10) {
@@ -33,7 +32,6 @@ function array_unique_benchmark(int $size, int $valueLength, string $sortOrder) 
       $countOccurences++;
     }
     echo "Custom implementation : unique_preserve_keys - count : {$countOccurences}\n";
-
 
     $countOccurences = 0;
     $start = microtime(true);
